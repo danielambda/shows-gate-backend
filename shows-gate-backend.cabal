@@ -1,0 +1,31 @@
+cabal-version:      3.4
+name:               shows-gate-backend
+version:            0.1.0.0
+homepage:           https://github.com/danielambda/shows-gate-backend
+license:            MIT
+license-file:       LICENSE
+author:             danielambda
+maintainer:         daniel.gevorgyan25@gmail.com
+category:           Web
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+executable shows-gate-backend
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        DatabaseModels
+      -- ,
+    build-depends:
+        base ^>=4.19.2.0
+      , beam-core
+      , beam-postgres
+      , beam-migrate
+      , postgresql-simple
+      , text
+      , bytestring
+    hs-source-dirs:   app
+    default-language: GHC2021
