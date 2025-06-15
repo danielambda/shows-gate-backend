@@ -1,0 +1,16 @@
+GET localhost:8080/movies/36f44926-58c0-4569-8032-c97412a13467
+
+###
+GET localhost:8080/movies/
+
+###
+POST localhost:8080/movies
+Content-Type: application/json
+
+{
+  "title": "801",
+  "runtimeMinutes": 52
+}
+
+###
+DELETE localhost:8080/movies/36f44926-58c0-4569-8032-c97412a13467

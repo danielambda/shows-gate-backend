@@ -10,19 +10,19 @@ module DatabaseModels
   , MovieT(..), Movie
   , SeriesT(..), Series
   , EpisodeT(..), Episode
-  , ShowsGateDB, showsGateDB
+  , ShowsGateDB(..), showsGateDB, checkedShowsGateDB
   ) where
 
 import Database.Beam
 import Database.Beam.Backend.SQL (HasSqlValueSyntax(..))
-import Database.Beam.Postgres.CustomTypes (IsPgCustomDataType(..), pgBoundedEnumSchema, pgEnumValueSyntax)
+import Database.Beam.Migrate (CheckedDatabaseSettings, HasDefaultSqlDataType (..), defaultMigratableDbSettings, unCheckDatabase)
+import Database.Beam.Postgres.CustomTypes (IsPgCustomDataType(..), pgBoundedEnumSchema, pgEnumValueSyntax, pgParseEnum)
+import Database.Beam.Postgres (Postgres, )
 import Database.Beam.Postgres.Syntax (PgValueSyntax)
 import Data.Text (Text)
+import Data.UUID (UUID)
 
 import Data.Int (Int32)
-import Database.Beam.Migrate (CheckedDatabaseSettings, HasDefaultSqlDataType (..), defaultMigratableDbSettings)
-import Database.Beam.Postgres (Postgres, ResultError (..))
-import Database.PostgreSQL.Simple.FromField (FromField (..), typename, returnError)
 import Data.Proxy (Proxy(..))
 
 data TitleType
@@ -31,24 +31,19 @@ data TitleType
   | EpisodeType
   deriving (Show, Eq, Enum, Bounded)
 
-instance FromField TitleType where
-  fromField f mValue = typename f >>= \case
-    "title_type" -> case mValue of
-      Nothing -> returnError UnexpectedNull f ""
-      Just value -> case value of
-        "movie" -> pure MovieType
-        "series" -> pure SeriesType
-        "series_episode" -> pure EpisodeType
-        _ -> returnError ConversionFailed f "Could not 'read' value for 'TitleType'"
-    _ -> returnError Incompatible f ""
+instance HasSqlEqualityCheck Postgres TitleType
 
-instance FromBackendRow Postgres TitleType
+titleTypeToString :: TitleType -> String
+titleTypeToString = \case
+  MovieType -> "movie"
+  SeriesType -> "series"
+  EpisodeType -> "series_episode"
+
+instance FromBackendRow Postgres TitleType where
+  fromBackendRow = pgParseEnum titleTypeToString
 
 instance HasSqlValueSyntax PgValueSyntax TitleType where
-  sqlValueSyntax = pgEnumValueSyntax $ \case
-    MovieType -> "movie"
-    SeriesType -> "series"
-    EpisodeType -> "series_episode"
+  sqlValueSyntax = pgEnumValueSyntax titleTypeToString
 
 instance IsPgCustomDataType TitleType where
   pgDataTypeName _ = "title_type"
@@ -58,7 +53,7 @@ instance HasDefaultSqlDataType Postgres TitleType where
   defaultSqlDataType _ = defaultSqlDataType $ Proxy @Text
 
 data TitleT f = Title
-  { titleId :: Columnar f Int32
+  { titleId :: Columnar f UUID
   , title :: Columnar f Text
   , titleType :: Columnar f TitleType
   } deriving (Generic, Beamable)
@@ -68,7 +63,7 @@ deriving instance Show Title
 deriving instance Eq Title
 
 instance Table TitleT where
-  newtype PrimaryKey TitleT f = TitleId (Columnar f Int32)
+  newtype PrimaryKey TitleT f = TitleId (Columnar f UUID)
     deriving Generic
     deriving anyclass Beamable
   primaryKey = TitleId . titleId
@@ -123,5 +118,8 @@ data ShowsGateDB f = ShowsGateDB
   , episodes :: f (TableEntity EpisodeT)
   } deriving (Generic, Database be)
 
-showsGateDB :: CheckedDatabaseSettings Postgres ShowsGateDB
-showsGateDB = defaultMigratableDbSettings
+checkedShowsGateDB :: CheckedDatabaseSettings Postgres ShowsGateDB
+checkedShowsGateDB = defaultMigratableDbSettings
+
+showsGateDB :: DatabaseSettings Postgres ShowsGateDB
+showsGateDB = unCheckDatabase checkedShowsGateDB

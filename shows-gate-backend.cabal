@@ -17,14 +17,25 @@ executable shows-gate-backend
     main-is:          Main.hs
     other-modules:
         DatabaseModels
-      -- ,
+      , ShowsGate.WebAPI
+      , ShowsGate.WebAPI.Movies
     build-depends:
-        base ^>=4.19.2.0
+        base
+      , aeson
       , beam-core
-      , beam-postgres
       , beam-migrate
-      , postgresql-simple
-      , text
+      , beam-postgres
       , bytestring
+      , monad-time
+      , mtl
+      , postgresql-simple
+      , resource-pool
+      , servant-server
+      , text
+      , time
+      , uuid
+      , validation
+      , wai
+      , warp
     hs-source-dirs:   app
     default-language: GHC2021
