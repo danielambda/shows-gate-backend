@@ -3,13 +3,15 @@ module ShowsGate.WebAPI where
 
 import Servant
 
-import ShowsGate.WebAPI.Movies (MoviesAPI, moviesServer, MonadUUID (..), MonadPgConn(..))
+import ShowsGate.WebAPI.Movies (moviesServer, MonadUUID (..))
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Error.Class (MonadError)
 import qualified Data.UUID.V4 as V4 (nextRandom)
 import Control.Monad.Reader (asks, MonadReader, ReaderT (..))
 import Data.Pool (Pool, withResource)
 import Database.Beam.Postgres (Connection)
+import ShowsGate.DB (MonadPgConn (..))
+import ShowsGate.Contracts (API)
 
 newtype Env = Env { pgConnPool :: Pool Connection }
 
@@ -22,8 +24,6 @@ instance MonadPgConn AppM where
   askPgConn = do
     pool <- asks pgConnPool
     liftIO $ withResource pool return
-
-type API = "movies" :> MoviesAPI
 
 server :: ServerT API AppM
 server = moviesServer

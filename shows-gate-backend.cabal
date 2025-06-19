@@ -17,8 +17,17 @@ executable shows-gate-backend
     main-is:          Main.hs
     other-modules:
         DatabaseModels
+      , ShowsGate.Contracts
+      , ShowsGate.Contracts.ValidationErrorResp
+      , ShowsGate.Contracts.Movies
+      , ShowsGate.DB
+      , ShowsGate.Domain.Movie
+      , ShowsGate.Domain.Movie.Primitives
+      , ShowsGate.Domain.Title
+      , ShowsGate.Domain.Title.Primitives
       , ShowsGate.WebAPI
       , ShowsGate.WebAPI.Movies
+      , ShowsGate.WebAPI.Movies.Get
     build-depends:
         base
       , aeson
