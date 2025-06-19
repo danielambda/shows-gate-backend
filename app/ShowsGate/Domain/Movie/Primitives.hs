@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DataKinds #-}
 
 module ShowsGate.Domain.Movie.Primitives (MovieRuntime, mkMovieRuntime) where
 

@@ -1,6 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-
 module ShowsGate.Domain.Title.Primitives (TitleId(..)) where
 
 import Data.UUID (UUID)

@@ -1,7 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DerivingStrategies #-}
 
 module ShowsGate.DB.Models

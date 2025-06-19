@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
 module ShowsGate.Contracts.ValidationErrorResp (ValidationErrorResp(..)) where

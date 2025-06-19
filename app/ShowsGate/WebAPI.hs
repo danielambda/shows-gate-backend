@@ -1,10 +1,8 @@
-{-# LANGUAGE DataKinds #-}
-
 module ShowsGate.WebAPI where
 
 import Servant
 
-import ShowsGate.WebAPI.Movies (moviesServer, MonadUUID (..))
+import ShowsGate.WebAPI.Movies (moviesServer)
 import Control.Monad.IO.Class (MonadIO (..))
 import Control.Monad.Error.Class (MonadError)
 import qualified Data.UUID.V4 as V4 (nextRandom)
@@ -13,6 +11,7 @@ import Data.Pool (Pool, withResource)
 import qualified Database.Beam.Postgres as Pg (Connection)
 import ShowsGate.DB (MonadPgConn (..))
 import ShowsGate.Contracts (API)
+import ShowsGate.WebAPI.Common.MonadUUID (MonadUUID (..))
 
 newtype Env = Env { pgConnPool :: Pool Pg.Connection }
 
