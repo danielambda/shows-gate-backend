@@ -4,7 +4,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DerivingStrategies #-}
 
-module DatabaseModels
+module ShowsGate.DB.Models
   ( TitleType(..)
   , TitleT(..), Title
   , MovieT(..), Movie

@@ -16,11 +16,11 @@ executable shows-gate-backend
     import:           warnings
     main-is:          Main.hs
     other-modules:
-        DatabaseModels
-      , ShowsGate.Contracts
+        ShowsGate.Contracts
       , ShowsGate.Contracts.ValidationErrorResp
       , ShowsGate.Contracts.Movies
       , ShowsGate.DB
+      , ShowsGate.DB.Models
       , ShowsGate.Domain.Movie
       , ShowsGate.Domain.Movie.Primitives
       , ShowsGate.Domain.Title

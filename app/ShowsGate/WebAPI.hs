@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+
 module ShowsGate.WebAPI where
 
 import Servant
@@ -9,11 +10,11 @@ import Control.Monad.Error.Class (MonadError)
 import qualified Data.UUID.V4 as V4 (nextRandom)
 import Control.Monad.Reader (asks, MonadReader, ReaderT (..))
 import Data.Pool (Pool, withResource)
-import Database.Beam.Postgres (Connection)
+import qualified Database.Beam.Postgres as Pg (Connection)
 import ShowsGate.DB (MonadPgConn (..))
 import ShowsGate.Contracts (API)
 
-newtype Env = Env { pgConnPool :: Pool Connection }
+newtype Env = Env { pgConnPool :: Pool Pg.Connection }
 
 newtype AppM a = AppM { unAppM :: ReaderT Env Handler a }
   deriving (Functor, Applicative, Monad, MonadIO, MonadReader Env, MonadError ServerError)

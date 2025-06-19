@@ -3,28 +3,30 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module ShowsGate.WebAPI.Movies (MonadUUID(..), moviesServer) where
 
-import Servant
+import Servant (ServerT, type (:<|>) (..), respond, WithStatus (..), NoContent (NoContent))
 import Data.Text (Text)
 import Data.UUID (UUID)
 import Data.Validation (Validation (Failure, Success), validationNel, validation)
-import Data.Functor ((<&>))
 import Database.Beam.Postgres (Postgres)
-import Database.Beam
-import DatabaseModels (TitleType(..), ShowsGateDB(..), showsGateDB, MovieT (movieTitleId))
-import qualified DatabaseModels as DB
+import Database.Beam (FromBackendRow, QExprToIdentity, Projectible, QBaseScope, Q, insertValues, insert, runInsert, pk, runSelectReturningList, select, all_, references_, guard_, runDelete, delete, SqlEq ((==.)), SqlValable (val_))
+
+import Data.Functor ((<&>))
 import Data.List.NonEmpty (NonEmpty)
-import ShowsGate.Contracts.Movies (MoviesAPI, MovieResp (..), AddMovie, GetAllMovies, DeleteMovie, AddMovieReqBody(..))
-import ShowsGate.Contracts.ValidationErrorResp (ValidationErrorResp(..))
+
+import ShowsGate.DB (MonadPgConn, runPg)
+import ShowsGate.DB.Models (TitleType(..), ShowsGateDB(..), showsGateDB, MovieT (movieTitleId))
+import qualified ShowsGate.DB.Models as DB
 import ShowsGate.Domain.Movie (Movie (..))
 import ShowsGate.Domain.Title (TitleId(..), mkTitle)
 import ShowsGate.Domain.Movie.Primitives (mkMovieRuntime)
+import ShowsGate.Contracts.Movies (MoviesAPI, MovieResp (..), AddMovie, GetAllMovies, DeleteMovie, AddMovieReqBody(..))
+import ShowsGate.Contracts.ValidationErrorResp (ValidationErrorResp(..))
 import ShowsGate.WebAPI.Movies.Get (getMovie)
-import ShowsGate.DB (MonadPgConn, runPg)
 
 moviesServer :: (MonadPgConn m, MonadUUID m) => ServerT MoviesAPI m
 moviesServer

@@ -10,7 +10,7 @@ import qualified Data.ByteString.Char8 as BS (pack)
 import Control.Exception (bracket, finally)
 import System.Environment (getEnv)
 
-import DatabaseModels (checkedShowsGateDB)
+import ShowsGate.DB.Models (checkedShowsGateDB)
 import ShowsGate.WebAPI
 import Network.Wai.Handler.Warp (runSettings, defaultSettings, setHost, setPort, setBeforeMainLoop)
 import Data.Function ((&))

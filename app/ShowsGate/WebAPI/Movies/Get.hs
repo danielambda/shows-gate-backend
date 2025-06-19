@@ -1,28 +1,28 @@
 {-# LANGUAGE ApplicativeDo #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module ShowsGate.WebAPI.Movies.Get (getMovie) where
 
-import Servant
+import Database.Beam
+import Database.Beam.Postgres (Postgres)
 import Data.Text (Text)
 import Data.Validation (Validation, validationNel, validation)
+import Servant (ServerT, respond, WithStatus (..))
+
 import Data.Functor ((<&>))
-import Database.Beam.Postgres (Postgres)
-import Database.Beam
-import DatabaseModels (TitleType(..), ShowsGateDB(..), showsGateDB, MovieT (movieTitleId))
-import qualified DatabaseModels as DB
 import Data.List.NonEmpty (NonEmpty)
+
 import ShowsGate.Contracts.Movies (MovieResp (..), GetMovie, MovieNotFound (..))
 import ShowsGate.Domain.Movie (Movie (..))
-import ShowsGate.Domain.Title (TitleId(..), mkTitle)
 import ShowsGate.Domain.Movie.Primitives (mkMovieRuntime)
-
-
+import ShowsGate.Domain.Title (TitleId(..), mkTitle)
 import ShowsGate.DB (MonadPgConn, runPg)
+import ShowsGate.DB.Models (TitleType(..), ShowsGateDB(..), showsGateDB, MovieT (movieTitleId))
+import qualified ShowsGate.DB.Models as DB
 
 movieToResp :: Movie -> MovieResp
 movieToResp movie = MovieResp
@@ -31,7 +31,6 @@ movieToResp movie = MovieResp
   , runtimeMinutes = movie.mRuntimeMinutes <&> (.value)
   , releaseYear = fromIntegral <$> movie.mReleaseYear
   }
-
 
 getMovie :: MonadPgConn m => ServerT GetMovie m
 getMovie titleId = do
